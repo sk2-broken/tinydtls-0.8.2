@@ -35,6 +35,8 @@
 
 #include <string.h>
 
+#include "powertrace.h"
+
 #include "tinydtls.h"
 
 #ifndef DEBUG
@@ -307,6 +309,9 @@ PROCESS_THREAD(udp_server_process, ev, data)
 
   PROCESS_BEGIN();
 
+  printf("Ticks per second: %u\n", RTIMER_SECOND);
+  powertrace_start(CLOCK_CONF_SECOND * 1);
+
   dtls_init();
 
   init_dtls(&dst);
@@ -341,6 +346,8 @@ PROCESS_THREAD(udp_server_process, ev, data)
       try_send(dtls_context, &dst);
     }
   }
+
+  powertrace_stop();
   
   PROCESS_END();
 }

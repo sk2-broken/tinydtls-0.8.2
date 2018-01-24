@@ -25,7 +25,7 @@ abs_builddir = @abs_builddir@
 top_builddir = @top_builddir@
 top_srcdir:= @top_srcdir@
 DISTDIR=$(top_builddir)/@PACKAGE_TARNAME@-@PACKAGE_VERSION@
-DTLS_SOURCES:=dtls-server.c dtls-client.c
+DTLS_SOURCES:=dtls-server.c dtls-client.c powertrace.c
 FILES:=Makefile.in $(DTLS_SOURCES)
 
 all: dtls-server dtls-client
@@ -51,6 +51,7 @@ LDFLAGS += -Wl,--gc-sections,--undefined=_reset_vector__,--undefined=InterruptVe
 CFLAGS += -DSHA2_USE_INTTYPES_H
 
 APPS += tinydtls/aes tinydtls/sha2 tinydtls/ecc tinydtls
+APPS += powertrace
 
 ccm-test: tests/ccm-test
 
