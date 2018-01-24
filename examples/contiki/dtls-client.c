@@ -245,6 +245,7 @@ print_local_addresses(void)
 static void
 set_connection_address(uip_ipaddr_t *ipaddr)
 {
+#if 0
 #define _QUOTEME(x) #x
 #define QUOTEME(x) _QUOTEME(x)
 #ifdef UDP_CONNECTION_ADDR
@@ -256,6 +257,8 @@ set_connection_address(uip_ipaddr_t *ipaddr)
 #else
   uip_ip6addr(ipaddr,0xfe80,0,0,0,0x6466,0x6666,0x6666,0x6666);
 #endif /* UDP_CONNECTION_ADDR */
+#endif
+  uip_ip6addr(ipaddr,0xaaaa,0,0,0,0x0000,0x0000,0x0000,0x0001);
 }
 
 void
@@ -277,7 +280,8 @@ init_dtls(session_t *dst) {
   print_local_addresses();
 
   dst->size = sizeof(dst->addr) + sizeof(dst->port);
-  dst->port = UIP_HTONS(20220);
+  //dst->port = UIP_HTONS(20220);
+  dst->port = UIP_HTONS(1885);
 
   set_connection_address(&dst->addr);
   client_conn = udp_new(&dst->addr, 0, NULL);
@@ -299,6 +303,7 @@ PROCESS_THREAD(udp_server_process, ev, data)
 {
   static int connected = 0;
   static session_t dst;
+  static struct etimer et;
 
   PROCESS_BEGIN();
 
@@ -311,6 +316,11 @@ PROCESS_THREAD(udp_server_process, ev, data)
     dtls_emerg("cannot create context\n");
     PROCESS_EXIT();
   }
+
+  etimer_set(&et, CLOCK_CONF_SECOND*15);
+  PROCESS_WAIT_EVENT_UNTIL(ev == PROCESS_EVENT_TIMER);
+  etimer_stop(&et);
+  connected = dtls_connect(dtls_context, &dst) >= 0;
 
   while(1) {
     PROCESS_YIELD();
