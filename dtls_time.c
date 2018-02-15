@@ -37,7 +37,7 @@ clock_time_t dtls_clock_offset;
 
 void
 dtls_clock_init(void) {
-  clock_init();
+  //clock_init();
   dtls_clock_offset = clock_time();
 }
 
